@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Helllo Socket.IO</title>
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+        <label for="userName">User Name</label>
+        <input
+            type="text"
+            name="userName"
+            id="userName"
+            onblur="handleUser()"
+            placeholder="Enter a user name" >
+        <br />
+        <label for="userMesssage">Message</label>
+        <input id="userMessage" autocomplete="off" disabled/><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let message = document.getElementById('message');
+        let form = document.getElementById('form');
+        let input = document.getElementById('input');
+        let displayName = document.getElementById('userName').value;
+
+        form.addEventListener('submit', (e) =>{
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('chat message', input.value);
+                input.value = '';
+            }
+        });
+        socket.on('new user', (msg)=>{
+            let item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        })
+        socket.on('chat message', (msg) =>{
+            let item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        function handleUser() {
+            const username = document.getElementById('userName').value
+            alert(`About to emit ${username}`)
+            const socket = io()
+
+            document.getElementById('userMessage').removeAttribute('disabled')
+
+            socket.emit('user name', username)
+        }
+    </script>
+</body>
+</html>
